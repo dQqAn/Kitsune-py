@@ -1,0 +1,6 @@
+numpy~=1.26.4
+scipy~=1.13.0
+Cython~=3.0.10
+setuptools~=69.5.1
+matplotlib~=3.8.4
+scapy~=2.5.0
