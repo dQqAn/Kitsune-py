@@ -2,6 +2,10 @@
 import os
 import subprocess
 
+from scapy.layers.inet import TCP, UDP, IP, ICMP
+from scapy.layers.inet6 import IPv6
+from scapy.layers.l2 import ARP
+
 use_extrapolation=False #experimental correlation code
 if use_extrapolation:
     print("Importing AfterImage Cython Library")
