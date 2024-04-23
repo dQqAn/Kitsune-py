@@ -6,7 +6,7 @@ from scapy.layers.inet import TCP, UDP, IP, ICMP
 from scapy.layers.inet6 import IPv6
 from scapy.layers.l2 import ARP
 
-use_extrapolation=False #experimental correlation code
+use_extrapolation=True #experimental correlation code
 if use_extrapolation:
     print("Importing AfterImage Cython Library")
     if not os.path.isfile("AfterImage.c"): #has not yet been compiled, so try to do so...
@@ -45,7 +45,7 @@ class FE:
 
     def _get_tshark_path(self):
         if platform.system() == 'Windows':
-            return 'C:\Program Files\Wireshark\\tshark.exe'
+            return 'C:\\Program Files\\Wireshark\\tshark.exe'
         else:
             system_path = os.environ['PATH']
             for path in system_path.split(os.pathsep):

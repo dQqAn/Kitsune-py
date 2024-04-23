@@ -7,3 +7,6 @@
 /.idea/vcs.xml
 /mirai.pcap
 /mirai.pcap.tsv
+/build/
+/AfterImage_extrapolate.c
+/AfterImage_extrapolate.cp312-win_amd64.pyd
