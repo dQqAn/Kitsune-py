@@ -19,3 +19,10 @@
 /normal_indices.npy
 /normal_rmses.npy
 /results/temp/
+/results/mirai_job_all_vec.csv
+/results/mirai_job_anomaly_indices.npy
+/results/mirai_job_anomaly_rmses.npy
+/results/mirai_job_normal_indices.npy
+/results/mirai_job_normal_rmses.npy
+/results/mirai_job_rmse.pdf
+/results/mirai_job_rmse_plot.png

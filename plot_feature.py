@@ -2,9 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-dataset = "results/all_vec.csv"
-threshold = 0.4  # anomaly threshold - ADJUST ACCORDINGLY
-cols = [i for i in range(100)]  # column index
+from parse_args import *
+
+args = parse_args()
+dataset = args.dataset
+desc = args.job_description
+
+dataset_path = f"results/{dataset}_{desc}_all_vec.csv"
+threshold = args.threshold  # anomaly threshold - ADJUST ACCORDINGLY
+col_range=100
+cols = [i for i in range(col_range)]  # column index
 
 # Get list of all values in column i of the dataset
 def get_column(i):
@@ -12,10 +19,10 @@ def get_column(i):
 
 if __name__ == "__main__":
     # Load data.
-    anomalous_indices = np.load("anomaly_indices.npy")
-    anomalous_rmses = np.load("anomaly_rmses.npy")
+    anomalous_indices = np.load(f"results/{dataset}_{desc}_anomaly_indices.npy")
+    anomalous_rmses = np.load(f"results/{dataset}_{desc}_anomaly_rmses.npy")
 
-    data_list = np.genfromtxt(dataset)
+    data_list = np.genfromtxt(dataset_path)
 
     # Split indices into those with rmse less than and greater than threshold
     for col in cols:
@@ -54,5 +61,7 @@ if __name__ == "__main__":
         handles, labels = ax.get_legend_handles_labels()
         plt.legend(reversed(handles), reversed(labels), loc="upper right", fontsize=18)
         #plt.show()
-        plt.savefig(f"results/temp/feature_{col}.png", bbox_inches="tight")
+        plt.savefig(f"results/temp/{dataset}_{desc}_feature_{col}.png", bbox_inches="tight")
         plt.close()
+        if(col > col_range):
+            break

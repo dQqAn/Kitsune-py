@@ -4,6 +4,11 @@ import time
 import pickle
 import psutil
 import csv
+from parse_args import *
+
+args = parse_args()
+dataset = args.dataset
+desc = args.job_description
 
 # from line_profiler import profile
 # from line_profiler.explicit_profiler import profile
@@ -39,12 +44,31 @@ path = "mirai.pcap"  # the pcap, pcapng, or tsv file to process.
 packet_limit = np.Inf  # the number of packets to process
 
 # Get labels
-labels = "mirai_labels.csv" #the labels for the pcap packet data
+labels = f"{dataset}_labels.csv" #the labels for the pcap packet data
+print(labels)
 with open(labels, 'r') as f:
     reader = csv.reader(f)
     labels_list = list(reader)
 labels_list = [int(sublist[-1]) for sublist in labels_list] #flatten list of labels
-
+if dataset != 'mirai':
+    if len(labels_list[0]) == 2:
+        for i in range(len(labels_list)):
+            labels_list[i] = labels_list[i][1]
+    if '0' not in labels_list[0]:
+        labels_list.pop(0)
+    benign_packets = 0
+    for i in range(len(labels_list)):
+        if labels_list[i] == '0':
+            benign_packets += 1
+        else:
+            break
+else:
+    benign_packets = 0
+    for i in range(len(labels_list)):
+        if int(labels_list[i]) == 0:
+            benign_packets += 1
+        else:
+            break
 # KitNET params:
 maxAE = 10  # maximum size for any autoencoder in the ensemble layer
 FMgrace = 5000  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
@@ -122,11 +146,11 @@ print("Normal rmses: ", np.sort(normal_rmses))
 print("Anomaly rmse mean: ", np.mean(anomaly_rmses))
 print("Anomaly rmse std: ", np.std(anomaly_rmses))
 print("Anomaly rmses: ", np.sort(anomaly_rmses))
-np.save("normal_rmses.npy", normal_rmses)
-np.save("normal_indices.npy", normal_indices)
-np.save("anomaly_rmses.npy", anomaly_rmses)
-np.save("anomaly_indices.npy", anomaly_indices)
-np.savetxt("results/all_vec.csv", all_vec)
+np.save(f"results/{dataset}_{desc}_normal_rmses.npy", normal_rmses)
+np.save(f"results/{dataset}_{desc}_normal_indices.npy", normal_indices)
+np.save(f"results/{dataset}_{desc}_anomaly_rmses.npy", anomaly_rmses)
+np.save(f"results/{dataset}_{desc}_anomaly_indices.npy", anomaly_indices)
+np.savetxt(f"results/{dataset}_{desc}_all_vec.csv", all_vec)
 print('All vectors saved, shape', all_vec.shape)
 
 # Measure RAM usage after processing packets
@@ -162,5 +186,5 @@ plt.ylabel("RMSE (log scaled)")
 plt.xlabel("Time elapsed [min]")
 figbar = plt.colorbar()
 figbar.ax.set_ylabel('Log Probability\n ', rotation=270)
-plt.savefig('results/rmse_plot.png')
+plt.savefig(f'results/{dataset}_{desc}_rmse_plot.png')
 plt.show()
