@@ -1,3 +1,7 @@
+*.pcap
+*.tsv
+*.npy
+*.pyd
 /.venv/
 /.idea/.gitignore
 /.idea/Kitsune-py.iml
