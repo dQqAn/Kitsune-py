@@ -43,7 +43,7 @@ labels = "mirai_labels.csv" #the labels for the pcap packet data
 with open(labels, 'r') as f:
     reader = csv.reader(f)
     labels_list = list(reader)
-labels_list = [int(item) for sublist in labels_list for item in sublist] #flatten list of labels
+labels_list = [int(sublist[-1]) for sublist in labels_list] #flatten list of labels
 
 # KitNET params:
 maxAE = 10  # maximum size for any autoencoder in the ensemble layer
