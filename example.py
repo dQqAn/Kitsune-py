@@ -28,7 +28,7 @@ packet_limit = np.Inf #the number of packets to process
 # KitNET params:
 maxAE = 10 #maximum size for any autoencoder in the ensemble layer
 FMgrace = 5000 #the number of instances taken to learn the feature mapping (the ensemble's architecture)
-ADgrace = 50000 #the number of instances used to train the anomaly detector (ensemble itself)
+ADgrace = 20000 #the number of instances used to train the anomaly detector (ensemble itself)
 
 # Build Kitsune
 K = Kitsune(path,packet_limit,maxAE,FMgrace,ADgrace)
@@ -44,6 +44,8 @@ while True:
     if i % 1000 == 0:
         print(f"Packet {i} and time taken: ", time.time() - start)
     rmse = K.proc_next_packet()
+    if i > 30000:
+       break
     if rmse == -1:
         break
     RMSEs.append(rmse)
