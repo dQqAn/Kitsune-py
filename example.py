@@ -3,6 +3,7 @@ import numpy as np
 import time
 import pickle
 import psutil
+import csv
 
 # from line_profiler import profile
 # from line_profiler.explicit_profiler import profile
@@ -37,6 +38,13 @@ with zipfile.ZipFile("mirai.zip", "r") as zip_ref:
 path = "mirai.pcap"  # the pcap, pcapng, or tsv file to process.
 packet_limit = np.Inf  # the number of packets to process
 
+# Get labels
+labels = "mirai_labels.csv" #the labels for the pcap packet data
+with open(labels, 'r') as f:
+    reader = csv.reader(f)
+    labels_list = list(reader)
+labels_list = [int(item) for sublist in labels_list for item in sublist] #flatten list of labels
+
 # KitNET params:
 maxAE = 10  # maximum size for any autoencoder in the ensemble layer
 FMgrace = 5000  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
@@ -67,6 +75,11 @@ print("Running Kitsune:")
 RMSEs = []
 i = 0
 
+normal_rmses = [0]
+normal_indices = [0]
+anomaly_rmses = [0]
+anomaly_indices = [0]
+
 # Call cpu_percent to measure how much CPU is used to process packets
 process.cpu_percent()
 # Measure RAM usage before processing packets
@@ -85,9 +98,30 @@ while True:
         break
     if rmse == -1:
         break
+    if labels_list[i - 1] == 0:
+        normal_rmses.append(rmse)
+        normal_indices.append(i)
+    else:
+        anomaly_rmses.append(rmse)
+        anomaly_indices.append(i)
     RMSEs.append(rmse)
 stop = time.time()
 print("Complete. Time elapsed: " + str(stop - start))
+
+normal_rmses = np.array(normal_rmses)
+normal_indices = np.array(normal_indices)
+anomaly_rmses = np.array(anomaly_rmses)
+anomaly_indices = np.array(anomaly_indices)
+print("Normal rmse mean: ", np.mean(normal_rmses))
+print("Normal rmse std: ", np.std(normal_rmses))
+print("Normal rmses: ", np.sort(normal_rmses))
+print("Anomaly rmse mean: ", np.mean(anomaly_rmses))
+print("Anomaly rmse std: ", np.std(anomaly_rmses))
+print("Anomaly rmses: ", np.sort(anomaly_rmses))
+np.save("normal_rmses.npy", normal_rmses)
+np.save("normal_indices.npy", normal_indices)
+np.save("anomaly_rmses.npy", anomaly_rmses)
+np.save("anomaly_indices.npy", anomaly_indices)
 
 # Measure RAM usage after processing packets
 ram_after = process.memory_info().vms

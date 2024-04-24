@@ -14,3 +14,7 @@
 /mirai_labels.csv
 /.idea/other.xml
 /test_results_test.p
+/anomaly_indices.npy
+/anomaly_rmses.npy
+/normal_indices.npy
+/normal_rmses.npy
