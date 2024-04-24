@@ -42,7 +42,7 @@ start = time.time()
 while True:
     i+=1
     if i % 1000 == 0:
-        print(i)
+        print(f"Packet {i} and time taken: ", time.time() - start)
     rmse = K.proc_next_packet()
     if rmse == -1:
         break
