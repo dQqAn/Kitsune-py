@@ -10,3 +10,7 @@
 /build/
 /AfterImage_extrapolate.c
 /AfterImage_extrapolate.cp312-win_amd64.pyd
+/memorytest.log
+/mirai_labels.csv
+/.idea/other.xml
+/test_results_test.p
