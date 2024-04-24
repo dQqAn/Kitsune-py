@@ -89,11 +89,12 @@ start = time.time()
 # Here we process (train/execute) each individual packet.
 # In this way, each observation is discarded after performing process() method.
 # Processing the packets
+all_vec = []
 while True:
     i += 1
     if i % display_freq == 0:
         print(f"Packet {i} and time taken: ", time.time() - start)
-    rmse = K.proc_next_packet()
+    rmse, vec = K.proc_next_packet()
     if i > last_packets:
         break
     if rmse == -1:
@@ -104,10 +105,13 @@ while True:
     else:
         anomaly_rmses.append(rmse)
         anomaly_indices.append(i)
+    if vec is not None:
+        all_vec.append(vec)
     RMSEs.append(rmse)
 stop = time.time()
 print("Complete. Time elapsed: " + str(stop - start))
 
+all_vec = np.array(all_vec)
 normal_rmses = np.array(normal_rmses)
 normal_indices = np.array(normal_indices)
 anomaly_rmses = np.array(anomaly_rmses)
@@ -122,6 +126,8 @@ np.save("normal_rmses.npy", normal_rmses)
 np.save("normal_indices.npy", normal_indices)
 np.save("anomaly_rmses.npy", anomaly_rmses)
 np.save("anomaly_indices.npy", anomaly_indices)
+np.savetxt("results/all_vec.csv", all_vec)
+print('All vectors saved, shape', all_vec.shape)
 
 # Measure RAM usage after processing packets
 ram_after = process.memory_info().vms
@@ -156,4 +162,5 @@ plt.ylabel("RMSE (log scaled)")
 plt.xlabel("Time elapsed [min]")
 figbar = plt.colorbar()
 figbar.ax.set_ylabel('Log Probability\n ', rotation=270)
+plt.savefig('results/rmse_plot.png')
 plt.show()
