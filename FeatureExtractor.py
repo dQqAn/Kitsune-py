@@ -6,7 +6,7 @@ from scapy.layers.inet import TCP, UDP, IP, ICMP
 from scapy.layers.inet6 import IPv6
 from scapy.layers.l2 import ARP
 
-use_extrapolation=True #experimental correlation code
+use_extrapolation=False #experimental correlation code
 if use_extrapolation:
     print("Importing AfterImage Cython Library")
     if not os.path.isfile("AfterImage.c"): #has not yet been compiled, so try to do so...
