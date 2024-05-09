@@ -38,7 +38,7 @@ if __name__ == "__main__":
         max_i = max(np.amax(column_less), np.amax(column_greater))
         x_max = max_i
         plt.figure(figsize=(8,5))
-        plt.xlim(0, x_max)
+        plt.xlim(0, x_max) # UserWarning: Attempting to set identical low and high xlims makes transformation singular; automatically expanding.
 
         bin_list = [x_max/100.0 * i for i in range(101)]
 
