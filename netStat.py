@@ -2,8 +2,8 @@ import numpy as np
 ## Prep AfterImage cython package
 import os
 import subprocess
-import pyximport
-pyximport.install()
+# import pyximport
+# pyximport.install()
 import AfterImage as af
 #import AfterImage_NDSS as af
 
