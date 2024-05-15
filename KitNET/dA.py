@@ -28,21 +28,23 @@ import numpy
 from KitNET.utils import *
 import json
 
+
 class dA_params:
-    def __init__(self,n_visible = 5, n_hidden = 3, lr=0.001, corruption_level=0.0, gracePeriod = 10000, hiddenRatio=None):
-        self.n_visible = n_visible# num of units in visible (input) layer
-        self.n_hidden = n_hidden# num of units in hidden layer
+    def __init__(self, n_visible=5, n_hidden=3, lr=0.001, corruption_level=0.0, gracePeriod=10000, hiddenRatio=None):
+        self.n_visible = n_visible  # num of units in visible (input) layer
+        self.n_hidden = n_hidden  # num of units in hidden layer
         self.lr = lr
         self.corruption_level = corruption_level
         self.gracePeriod = gracePeriod
         self.hiddenRatio = hiddenRatio
+
 
 class dA:
     def __init__(self, params):
         self.params = params
 
         if self.params.hiddenRatio is not None:
-            self.params.n_hidden = int(numpy.ceil(self.params.n_visible*self.params.hiddenRatio))
+            self.params.n_hidden = int(numpy.ceil(self.params.n_visible * self.params.hiddenRatio))
 
         # for 0-1 normlaization
         self.norm_max = numpy.ones((self.params.n_visible,)) * -numpy.Inf
@@ -60,7 +62,6 @@ class dA:
         self.hbias = numpy.zeros(self.params.n_hidden)  # initialize h bias 0
         self.vbias = numpy.zeros(self.params.n_visible)  # initialize v bias 0
         self.W_prime = self.W.T
-
 
     def get_corrupted_input(self, input, corruption_level):
         assert corruption_level < 1
@@ -103,24 +104,22 @@ class dA:
         self.W += self.params.lr * L_W
         self.hbias += self.params.lr * L_hbias
         self.vbias += self.params.lr * L_vbias
-        return numpy.sqrt(numpy.mean(L_h2**2)) #the RMSE reconstruction error during training
-
+        return numpy.sqrt(numpy.mean(L_h2 ** 2))  # the RMSE reconstruction error during training
 
     def reconstruct(self, x):
         y = self.get_hidden_values(x)
         z = self.get_reconstructed_input(y)
         return z
 
-    def execute(self, x): #returns MSE of the reconstruction of x
+    def execute(self, x):  # returns MSE of the reconstruction of x
         if self.n < self.params.gracePeriod:
             return 0.0
         else:
             # 0-1 normalize
             x = (x - self.norm_min) / (self.norm_max - self.norm_min + 0.0000000000000001)
             z = self.reconstruct(x)
-            rmse = numpy.sqrt(((x - z) ** 2).mean()) #MSE
+            rmse = numpy.sqrt(((x - z) ** 2).mean())  # MSE
             return rmse
-
 
     def inGrace(self):
         return self.n < self.params.gracePeriod

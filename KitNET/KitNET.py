@@ -95,7 +95,7 @@ class KitNET:
                 self.v = self.FM.cluster(self.m)
                 self.__createAD__()
                 print("The Feature-Mapper found a mapping: " + str(self.n) + " features to " + str(
-                    len(self.v))+" autoencoders.")
+                    len(self.v)) + " autoencoders.")
                 print("Feature-Mapper: execute-mode, Anomaly-Detector: train-mode")
             self.n_trained += 1
             return 0.0
@@ -108,7 +108,7 @@ class KitNET:
                 S_l1[a] = self.ensemble_layer[a].train(xi)
             # OutputLayer
             output = self.output_layer.train(S_l1)
-            if self.n_trained == self.AD_grace_period+self.FM_grace_period - 1:
+            if self.n_trained == self.AD_grace_period + self.FM_grace_period - 1:
                 print("Feature-Mapper: execute-mode, Anomaly-Detector: execute-mode")
 
                 outdir = str(Path(__file__).parents[0]) + '/models'

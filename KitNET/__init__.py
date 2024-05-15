@@ -1,1 +1,1 @@
-__all__ = ["corClust", "dA", "KitNET","utils"]
+__all__ = ["corClust", "dA", "KitNET", "utils"]

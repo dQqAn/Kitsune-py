@@ -10,12 +10,14 @@ desc = args.job_description
 
 dataset_path = f"results/{dataset}_{desc}_all_vec.csv"
 threshold = args.threshold  # anomaly threshold - ADJUST ACCORDINGLY
-col_range=100
+col_range = 100
 cols = [i for i in range(col_range)]  # column index
+
 
 # Get list of all values in column i of the dataset
 def get_column(i):
     return [float(row[i]) for row in data_list]
+
 
 if __name__ == "__main__":
     # Load data.
@@ -37,17 +39,20 @@ if __name__ == "__main__":
 
         max_i = max(np.amax(column_less), np.amax(column_greater))
         x_max = max_i
-        plt.figure(figsize=(8,5))
-        plt.xlim(0, x_max) # UserWarning: Attempting to set identical low and high xlims makes transformation singular; automatically expanding.
+        plt.figure(figsize=(8, 5))
+        plt.xlim(0,
+                 x_max)  # UserWarning: Attempting to set identical low and high xlims makes transformation singular; automatically expanding.
 
-        bin_list = [x_max/100.0 * i for i in range(101)]
+        bin_list = [x_max / 100.0 * i for i in range(101)]
 
-        n, bins, patches = plt.hist(column_greater, bins=bin_list, facecolor='g', label="malicious packets w/ rmse > " + str(threshold), log=True)
+        n, bins, patches = plt.hist(column_greater, bins=bin_list, facecolor='g',
+                                    label="malicious packets w/ rmse > " + str(threshold), log=True)
         bin_centers = 0.5 * (bins[:-1] + bins[1:])
         for c, p in zip(bin_centers, patches):
             plt.setp(p, color='#a32632', alpha=0.7)
 
-        n, bins, patches = plt.hist(column_less, bins=bin_list, facecolor='g', label="malicious packets w/ rmse < " + str(threshold), log=True)
+        n, bins, patches = plt.hist(column_less, bins=bin_list, facecolor='g',
+                                    label="malicious packets w/ rmse < " + str(threshold), log=True)
         bin_centers = 0.5 * (bins[:-1] + bins[1:])
         for c, p in zip(bin_centers, patches):
             plt.setp(p, color='#305da1', alpha=0.7)
@@ -60,8 +65,8 @@ if __name__ == "__main__":
         ax = plt.gca()
         handles, labels = ax.get_legend_handles_labels()
         plt.legend(reversed(handles), reversed(labels), loc="upper right", fontsize=18)
-        #plt.show()
+        # plt.show()
         plt.savefig(f"results/temp/{dataset}_{desc}_feature_{col}.png", bbox_inches="tight")
         plt.close()
-        if(col > col_range):
+        if (col > col_range):
             break

@@ -1,4 +1,4 @@
-#Check if cython code has been compiled
+# Check if cython code has been compiled
 import os
 import subprocess
 
@@ -6,16 +6,17 @@ from scapy.layers.inet import TCP, UDP, IP, ICMP
 from scapy.layers.inet6 import IPv6
 from scapy.layers.l2 import ARP
 
-use_extrapolation=False #experimental correlation code
+use_extrapolation = False  # experimental correlation code
 if use_extrapolation:
     print("Importing AfterImage Cython Library")
-    if not os.path.isfile("AfterImage.c"): #has not yet been compiled, so try to do so...
+    if not os.path.isfile("AfterImage.c"):  # has not yet been compiled, so try to do so...
         cmd = "python setup.py build_ext --inplace"
-        subprocess.call(cmd,shell=True)
-#Import dependencies
+        subprocess.call(cmd, shell=True)
+# Import dependencies
 import netStat as ns
 import csv
 import numpy as np
+
 print("Importing Scapy Library")
 from scapy.all import *
 import os.path
@@ -23,17 +24,17 @@ import platform
 import subprocess
 
 
-#Extracts Kitsune features from given pcap file one packet at a time using "get_next_vector()"
+# Extracts Kitsune features from given pcap file one packet at a time using "get_next_vector()"
 # If wireshark is installed (tshark) it is used to parse (it's faster), otherwise, scapy is used (much slower).
 # If wireshark is used then a tsv file (parsed version of the pcap) will be made -which you can use as your input next time
 class FE:
-    def __init__(self,file_path,limit=np.inf):
+    def __init__(self, file_path, limit=np.inf):
         self.path = file_path
         self.limit = limit
-        self.parse_type = None #unknown
+        self.parse_type = None  # unknown
         self.curPacketIndx = 0
-        self.tsvin = None #used for parsing TSV file
-        self.scapyin = None #used for parsing pcap with scapy
+        self.tsvin = None  # used for parsing TSV file
+        self.scapyin = None  # used for parsing pcap with scapy
 
         ### Prep pcap ##
         self.__prep__()
@@ -75,7 +76,7 @@ class FE:
                 self.pcap2tsv_with_tshark()  # creates local tsv file
                 self.path += ".tsv"
                 self.parse_type = "tsv"
-            else: # Otherwise, parse with scapy (slower)
+            else:  # Otherwise, parse with scapy (slower)
                 print("tshark not found. Trying scapy...")
                 self.parse_type = "scapy"
         else:
@@ -99,12 +100,12 @@ class FE:
             print("counting lines in file...")
             num_lines = sum(1 for line in open(self.path))
             print("There are " + str(num_lines) + " Packets.")
-            self.limit = min(self.limit, num_lines-1)
+            self.limit = min(self.limit, num_lines - 1)
             self.tsvinf = open(self.path, 'rt', encoding="utf8")
             self.tsvin = csv.reader(self.tsvinf, delimiter='\t')
-            row = self.tsvin.__next__() #move iterator past header
+            row = self.tsvin.__next__()  # move iterator past header
 
-        else: # scapy
+        else:  # scapy
             print("Reading PCAP file via Scapy...")
             self.scapyin = rdpcap(self.path)
             self.limit = len(self.scapyin)
@@ -200,23 +201,21 @@ class FE:
 
         self.curPacketIndx = self.curPacketIndx + 1
 
-
         ### Extract Features
         try:
             return self.nstat.updateGetStats(IPtype, srcMAC, dstMAC, srcIP, srcproto, dstIP, dstproto,
-                                                 int(framelen),
-                                                 float(timestamp))
+                                             int(framelen),
+                                             float(timestamp))
         except Exception as e:
             print(e)
             return []
 
-
     def pcap2tsv_with_tshark(self):
         print('Parsing with tshark...')
         fields = "-e frame.time_epoch -e frame.len -e eth.src -e eth.dst -e ip.src -e ip.dst -e tcp.srcport -e tcp.dstport -e udp.srcport -e udp.dstport -e icmp.type -e icmp.code -e arp.opcode -e arp.src.hw_mac -e arp.src.proto_ipv4 -e arp.dst.hw_mac -e arp.dst.proto_ipv4 -e ipv6.src -e ipv6.dst"
-        cmd =  '"' + self._tshark + '" -r '+ self.path +' -T fields '+ fields +' -E header=y -E occurrence=f > '+self.path+".tsv"
-        subprocess.call(cmd,shell=True)
-        print("tshark parsing complete. File saved as: "+self.path +".tsv")
+        cmd = '"' + self._tshark + '" -r ' + self.path + ' -T fields ' + fields + ' -E header=y -E occurrence=f > ' + self.path + ".tsv"
+        subprocess.call(cmd, shell=True)
+        print("tshark parsing complete. File saved as: " + self.path + ".tsv")
 
     def get_num_features(self):
         return len(self.nstat.getNetStatHeaders())

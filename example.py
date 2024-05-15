@@ -44,12 +44,12 @@ path = "mirai.pcap"  # the pcap, pcapng, or tsv file to process.
 packet_limit = np.Inf  # the number of packets to process
 
 # Get labels
-labels = f"{dataset}_labels.csv" #the labels for the pcap packet data
+labels = f"{dataset}_labels.csv"  # the labels for the pcap packet data
 print(labels)
 with open(labels, 'r') as f:
     reader = csv.reader(f)
     labels_list = list(reader)
-labels_list = [int(sublist[-1]) for sublist in labels_list] #flatten list of labels
+labels_list = [int(sublist[-1]) for sublist in labels_list]  # flatten list of labels
 if dataset != 'mirai':
     if len(labels_list[0]) == 2:
         for i in range(len(labels_list)):
