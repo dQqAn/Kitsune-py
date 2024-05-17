@@ -40,7 +40,12 @@ with zipfile.ZipFile("mirai.zip", "r") as zip_ref:
     zip_ref.extractall()
 
 # File location
-path = "mirai.pcap"  # the pcap, pcapng, or tsv file to process.
+dataset_file = True
+if dataset_file is False:
+    path = "mirai.pcap"  # the pcap, pcapng, or tsv file to process.
+else:
+    # path = "dataset_short.pcapng"
+    path = "dataset_long.pcapng"  # default
 packet_limit = np.Inf  # the number of packets to process
 
 # Get labels
@@ -71,8 +76,8 @@ else:
             break
 # KitNET params:
 maxAE = 10  # maximum size for any autoencoder in the ensemble layer
-FMgrace = 5000  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
-ADgrace = 20000  # the number of instances used to train the anomaly detector (ensemble itself)
+FMgrace = 600  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
+ADgrace = 3000  # the number of instances used to train the anomaly detector (ensemble itself)
 
 # How often to display the number of processed packets
 display_freq = 1000
@@ -84,7 +89,7 @@ process.cpu_percent()
 ram_before = process.memory_info().vms
 
 # Build Kitsune
-K = Kitsune(path, packet_limit, maxAE, FMgrace, ADgrace)
+K = Kitsune(path, packet_limit, maxAE, FMgrace, ADgrace, dataset=dataset_file)
 
 # Measure RAM usage after building Kitsune
 ram_after = process.memory_info().vms
@@ -96,7 +101,7 @@ fp.write("RAM used while building Kitsune: " + str(ram_after - ram_before) + "\n
 
 print("Running Kitsune:")
 # liste veya dizideki kök ortalama kare hatası (Root Mean Square Error - RMSE)
-RMSEs = []
+RMSEs = [0]
 i = 0
 
 normal_rmses = [0]
@@ -113,7 +118,7 @@ start = time.time()
 # Here we process (train/execute) each individual packet.
 # In this way, each observation is discarded after performing process() method.
 # Processing the packets
-all_vec = []
+all_vec = [0]
 while True:
     i += 1
     if i % display_freq == 0:
@@ -169,7 +174,7 @@ print("All packets have been processed. Time elapsed: " + str(stop - start))
 # Here we demonstrate how one can fit the RMSE scores to a log-normal distribution (useful for finding/setting a cutoff threshold \phi)
 from scipy.stats import norm
 
-benignSample = np.log(RMSEs[FMgrace + ADgrace + 1:100000])
+benignSample = np.log(RMSEs[FMgrace + ADgrace + 1:7067])
 logProbs = norm.logsf(np.log(RMSEs), np.mean(benignSample), np.std(benignSample))
 
 # plot the RMSE anomaly scores
