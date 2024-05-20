@@ -76,8 +76,14 @@ else:
             break
 # KitNET params:
 maxAE = 10  # maximum size for any autoencoder in the ensemble layer
-FMgrace = 600  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
-ADgrace = 3000  # the number of instances used to train the anomaly detector (ensemble itself)
+if dataset_file is False:
+    FMgrace = 5000  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
+    ADgrace = 20000  # the number of instances used to train the anomaly detector (ensemble itself)
+    packets = 100000
+else:
+    FMgrace = 600
+    ADgrace = 3000
+    packets = 7067
 
 # How often to display the number of processed packets
 display_freq = 1000
@@ -174,7 +180,7 @@ print("All packets have been processed. Time elapsed: " + str(stop - start))
 # Here we demonstrate how one can fit the RMSE scores to a log-normal distribution (useful for finding/setting a cutoff threshold \phi)
 from scipy.stats import norm
 
-benignSample = np.log(RMSEs[FMgrace + ADgrace + 1:7067])
+benignSample = np.log(RMSEs[FMgrace + ADgrace + 1:packets])
 logProbs = norm.logsf(np.log(RMSEs), np.mean(benignSample), np.std(benignSample))
 
 # plot the RMSE anomaly scores
