@@ -107,7 +107,7 @@ fp.write("RAM used while building Kitsune: " + str(ram_after - ram_before) + "\n
 
 print("Running Kitsune:")
 # liste veya dizideki kök ortalama kare hatası (Root Mean Square Error - RMSE)
-RMSEs = [0]
+RMSEs = []
 i = 0
 
 normal_rmses = [0]
@@ -124,7 +124,7 @@ start = time.time()
 # Here we process (train/execute) each individual packet.
 # In this way, each observation is discarded after performing process() method.
 # Processing the packets
-all_vec = [0]
+all_vec = []
 while True:
     i += 1
     if i % display_freq == 0:
