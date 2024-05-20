@@ -79,7 +79,7 @@ maxAE = 10  # maximum size for any autoencoder in the ensemble layer
 if dataset_file is False:
     FMgrace = 5000  # the number of instances taken to learn the feature mapping (the ensemble's architecture)
     ADgrace = 20000  # the number of instances used to train the anomaly detector (ensemble itself)
-    packets = 100000
+    packets = 100000  # Todo: get all number of packets from FeatureExtractor.py
 else:
     FMgrace = 600
     ADgrace = 3000
